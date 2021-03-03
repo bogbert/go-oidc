@@ -86,6 +86,10 @@ func VerifyClaims(jwt jose.JWT, issuer, clientID string) error {
 		if !containsString(clientID, aud) {
 			return fmt.Errorf("invalid claims, cannot find 'client_id' in 'aud' claim, aud=%v, client_id=%s", aud, clientID)
 		}
+	} else if aud, ok, err := claims.StringClaim("client_id"); err == nil && ok {
+		if aud != clientID {
+			return fmt.Errorf("invalid claims, 'client_id' claim do not match, claim=%s, expected client id=%s", aud, clientID)
+		}
 	} else {
 		return errors.New("invalid claim value: 'aud' is required, and should be either string or string array")
 	}
